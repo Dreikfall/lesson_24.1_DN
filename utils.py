@@ -1,6 +1,9 @@
 import re
+
+from _typeshed import SupportsNext
+
 from werkzeug.exceptions import BadRequest
-from typing import Iterable
+from typing import Iterable, Any, Union
 
 from exceptions import FilterMapColErrors, SortError, CmdError, UniqueErrors
 
@@ -43,7 +46,7 @@ def filter_unique(iter_obj: Iterable, value: str) -> Iterable:
     return uniq_set
 
 
-def filter_sort(iter_obj: Iterable, asc_desc: str) -> Iterable:
+def filter_sort(iter_obj: Iterable, asc_desc: str | bool) -> Iterable:
     """Фильтрация по алфавиту в обе стороны"""
     if asc_desc not in ['asc', 'desc']:
         raise SortError('Необходимо установить значение value "asc" или "desc"')
@@ -52,7 +55,7 @@ def filter_sort(iter_obj: Iterable, asc_desc: str) -> Iterable:
     return iter_obj
 
 
-def filter_limit(iter_obj: Iterable, limit: int) -> Iterable:
+def filter_limit(iter_obj: SupportsNext[Any], limit: int) -> Iterable:
     """Лимит записей"""
     buff = (next(iter_obj) for i in range(limit))
     return buff
@@ -64,7 +67,7 @@ def filter_regex(iter_obj: Iterable, query: str) -> Iterable:
     return result
 
 
-def do_query(cmd: str, value: str, iter_obj: Iterable) -> Iterable:
+def do_query(cmd: str, value: str, iter_obj: Union[Iterable[Any], SupportsNext[Any]]) -> Iterable:
     """Функция набора фильтров"""
     if cmd == 'filter':
         iter_obj = filter_query(iter_obj, value)
