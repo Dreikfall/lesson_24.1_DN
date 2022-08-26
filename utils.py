@@ -1,9 +1,8 @@
 import re
 
-from _typeshed import SupportsNext
 
 from werkzeug.exceptions import BadRequest
-from typing import Iterable, Any, Union
+from typing import Iterable
 
 from exceptions import FilterMapColErrors, SortError, CmdError, UniqueErrors
 
@@ -55,9 +54,10 @@ def filter_sort(iter_obj: Iterable, asc_desc: str | bool) -> Iterable:
     return iter_obj
 
 
-def filter_limit(iter_obj: SupportsNext[Any], limit: int) -> Iterable:
+def filter_limit(iter_obj: Iterable, limit: int) -> Iterable:
     """Лимит записей"""
-    buff = (next(iter_obj) for i in range(limit))
+    lst = list(iter_obj)
+    buff = (lst[i] for i in range(limit))
     return buff
 
 
@@ -67,7 +67,7 @@ def filter_regex(iter_obj: Iterable, query: str) -> Iterable:
     return result
 
 
-def do_query(cmd: str, value: str, iter_obj: Union[Iterable[Any], SupportsNext[Any]]) -> Iterable:
+def do_query(cmd: str, value: str, iter_obj: Iterable) -> Iterable:
     """Функция набора фильтров"""
     if cmd == 'filter':
         iter_obj = filter_query(iter_obj, value)
